@@ -1,3 +1,45 @@
+<?php
+    $filepath = realpath(dirname(__FILE__));
+
+    include_once ($filepath.'/lib/Session.php');
+    include_once ($filepath.'/lib/Cookie.php');
+    include_once ($filepath.'/classes/Admin.php');
+    
+    if(!Cookie::get("loginInfor")){
+        Session::checkAdminLogin();
+    }
+    // if(Session::checkAdminLogin()){
+    //     echo '<div class="alert alert-success" role="alert">
+    //     <i class="far fa-check-square fa-2x"></i> Đăng nhập thành công
+    //    </div>';
+    // };
+    
+?>
+ 
+<?php
+      if(isset($_GET['action']) && $_GET['action'] == 'logout'){
+        Session::destroy();
+        Cookie::destroy($cookie_name);
+        header("Location:login.php");
+        exit();
+      }
+      if(isset($_GET['update'])){
+        $ad = new Admin();
+        $id = $_GET['update'];
+        header("Location:applications/update.php?id=".$id);
+
+        }
+      if(isset($_GET['action'])&& $_GET['action'] == 'add'){
+          header("Location:applications/add.php");
+      }
+      if(isset($_GET['delete'])){
+        $ad = new Admin();
+        $id = $_GET['delete'];
+        header("Location:applications/delete.php?id=".$id);
+        }
+    
+   
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,65 +57,39 @@
     <body>
         <div class="wrapper">
             <!-- Sidebar Holder -->
-            <nav id="sidebar">
-                <div class="sidebar-header">
-                    <h3>Mini Project</h3>
-                </div>
-
-                <ul class="list-unstyled components">
-                    <p>PHAM HIEU - OE26</p>
-                    <li class="active">
-                       <a href="#">Home</a>
-                    </li> 
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                </ul>
-            </nav>
+            <?php
+                include ('layouts/sidebar.php');
+            ?>
             <!-- Page Content Holder -->
             <div id="content">
-                    <div class="container-fluid">
-
-                        <div class="navbar-header">
-                            <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
-                                <i class="glyphicon glyphicon-align-left"></i>
-                                <span>Menu</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="container">
-                        <table class="table">
+                    <?php
+                        include ('layouts/menubar.php');
+                    ?>
+                    <div class="container ">
+                        <?php
+                            if(Session::checkAddStatus()){
+                                echo'<div class="alert alert-success" role="alert">
+                                    <i class="far fa-check-square fa-2x"></i> Thêm thành công!
+                                    </div>';
+                            };
+                        ?>
+                        <table class="table pt-5">
                             <thead>
                                 <tr>
                                     <th>STT</th>
                                     <th>Tên truyện</th>
-                                    <th>Mô tả</th>
                                     <th>Tác giả</th>
+                                    <th>Mô tả</th>
                                     <th>Chức năng</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td scope="row">1</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td scope="row">2</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>
-                                        <a href=""><i class="fas fa-trash-alt"></i></a>
-                                        <a href=""><i class="fas fa-pencil-alt"></i></a>
-
-                                        <!-- <button value='<i class="fas fa-pencil-alt"></>'> -->
-                                    </td>
-                                </tr>
+                                <?php $ad  = new Admin();
+                                $ad->show();
+                                ?>
                             </tbody>
-                        </table>
+                        </table> 
+                        <a href="?action=add" class="btn btn-primary"><i class="far fa-plus-square"></i></a>
                     </div>
             </div>
         </div>
@@ -81,13 +97,32 @@
          <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
          <!-- Bootstrap Js CDN -->
          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
          <script type="text/javascript">
              $(document).ready(function () {
-                 $('#sidebarCollapse').on('click', function () {
-                     $('#sidebar').toggleClass('active');
-                 });
+                $('#sidebarCollapse').on('click', function () {
+                    $('#sidebar').toggleClass('active');
+                     
+                });
+                $(".alert").hide();
+                $(".alert").fadeIn(3000);
+                $(".alert").fadeOut(1000);
+                $('.delete').on("click", function (e) {
+                    e.preventDefault();
+
+                    var choice = confirm($(this).attr('data-confirm'));
+
+                    if (choice) {
+                        window.location.href = $(this).attr('href');
+                    }
+                });
              });
+         </script>
+         <script>
+                function deleletconfig() {
+                    alert ("Xóa Thành Công");
+                }
+                
+              
          </script>
     </body>
 </html>
