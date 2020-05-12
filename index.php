@@ -1,42 +1,64 @@
 <?php
     $filepath = realpath(dirname(__FILE__));
-
+    
     include_once ($filepath.'/lib/Session.php');
     include_once ($filepath.'/lib/Cookie.php');
     include_once ($filepath.'/classes/Admin.php');
+    include_once ($filepath.'/../core/Database.php');
     
+    Session::init();
+
     if(!Cookie::get("loginInfor")){
-        Session::checkAdminLogin();
+        Session::checkAdminLogin();        
     }
+    else{
+        parse_str(Cookie::get("loginInfor"));
+        $db = new Database();
+        if(isset($acc)&&isset($pass)){
+            $query = "select * from users where account = '$acc' and password = '$pass'";
+            $result = $db->select($query);
+            if($result!=true){
+                header('location:login.php');
+            }
+        }
+        else {
+        Cookie::set("loginInfor",'',0);
+        echo "done";
+        header('location:login.php');
+        }
+    }
+    // }
     // if(Session::checkAdminLogin()){
     //     echo '<div class="alert alert-success" role="alert">
     //     <i class="far fa-check-square fa-2x"></i> Đăng nhập thành công
     //    </div>';
     // };
+    // echo(Session::get("adminAccount"));
+  
     
 ?>
  
 <?php
-      if(isset($_GET['action']) && $_GET['action'] == 'logout'){
+    if(isset($_GET['action']) && $_GET['action'] == 'logout'){
         Session::destroy();
         Cookie::destroy($cookie_name);
         header("Location:login.php");
         exit();
-      }
-      if(isset($_GET['update'])){
+    }
+    if(isset($_GET['update'])){
         $ad = new Admin();
         $id = $_GET['update'];
         header("Location:applications/update.php?id=".$id);
 
-        }
-      if(isset($_GET['action'])&& $_GET['action'] == 'add'){
+    }
+    if(isset($_GET['action'])&& $_GET['action'] == 'add'){
           header("Location:applications/add.php");
-      }
-      if(isset($_GET['delete'])){
+    }
+    if(isset($_GET['delete'])){
         $ad = new Admin();
         $id = $_GET['delete'];
         header("Location:applications/delete.php?id=".$id);
-        }
+    }
     
    
 ?>
@@ -69,7 +91,7 @@
                         <?php
                             if(Session::checkAddStatus()){
                                 echo'<div class="alert alert-success" role="alert">
-                                    <i class="far fa-check-square fa-2x"></i> Thêm thành công!
+                                    <i class="far fa-check-square fa-2x"></i> Thành công!
                                     </div>';
                             };
                         ?>

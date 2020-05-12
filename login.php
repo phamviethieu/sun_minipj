@@ -11,11 +11,18 @@
 <?php
     if(Cookie::get("loginInfor")){
         parse_str(Cookie::get("loginInfor"));
-        $query = "select * from users where account = '$acc' and password = '$pass'";
-        $result = $db->select($query);
-        if($result!=false){
-            header('location:index.php');
-        }
+       
+            if(isset($acc)&&isset($pass)){
+                $query = "select * from users where account = '$acc' and password = '$pass'";
+                $result = $db->select($query);
+                if($result!=false){
+                    header('location:index.php');
+                }
+            } else {
+                Cookie::set("loginInfor",Cookie::get("loginInfor"),0);
+                // header('location:login.php');
+            }
+            
     }
     else{
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -42,7 +49,7 @@
         <form method="post" name = "login">
             <div class="form-group">
                 <label for="exampleInputEmail1">Tài khoản</label>
-                <input type="text" id = "acc" name = "adminAccount" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nhập tài khoản">
+                <input type="text" id = "acc" name = "adminAccount" class="form-control" value ="" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nhập tài khoản">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Mật khẩu</label>

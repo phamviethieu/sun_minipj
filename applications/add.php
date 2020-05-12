@@ -1,6 +1,6 @@
 <?php
     $filepath = realpath(dirname(__FILE__));
-
+   
     include_once ($filepath.'/../lib/Session.php');
     include_once ($filepath.'/../lib/Cookie.php');
     include_once ($filepath.'/../core/Database.php');
@@ -8,6 +8,22 @@
 
     if(!Cookie::get("loginInfor")){
         Session::checkAdminLogin();
+    }
+    else{
+        parse_str(Cookie::get("loginInfor"));
+        $db = new Database();
+        if(isset($acc)&&isset($pass)){
+            $query = "select * from users where account = '$acc' and password = '$pass'";
+            $result = $db->select($query);
+            if($result!=true){
+                header('location:../login.php');
+            }
+        }
+        else {
+        Cookie::set("loginInfor",'',0);
+   
+        header('location:../login.php');
+        }
     }
     if(isset($_GET['action']) && $_GET['action'] == 'logout'){
         Session::destroy();

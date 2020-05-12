@@ -9,6 +9,22 @@
     if(!Cookie::get("loginInfor")){
         Session::checkAdminLogin();
     }
+    else{
+        parse_str(Cookie::get("loginInfor"));
+        $db = new Database();
+        if(isset($acc)&&isset($pass)){
+            $query = "select * from users where account = '$acc' and password = '$pass'";
+            $result = $db->select($query);
+            if($result!=true){
+                header('location:../login.php');
+            }
+        }
+        else {
+        Cookie::set("loginInfor",'',0);
+        echo "done";
+        header('location:../login.php');
+        }
+    }
     if(isset($_GET['action']) && $_GET['action'] == 'logout'){
         Session::destroy();
         Cookie::destroy($cookie_name);
@@ -43,14 +59,14 @@
                     ?>
                     <div class="container">
                         <h3><b> Cập nhật truyện: </b></h3>
-                        <?php
+                        <!-- <?php
                         if(Cookie::get("update_status")==1){
                             echo '<div class="alert alert-success" role="alert">
                              <i class="far fa-check-square fa-2x"></i> Cập nhật thành công
                             </div>';
                     
                         }
-                    ?>
+                    ?> -->
                         </br>
 
                         <?php
@@ -78,7 +94,12 @@
                 $('#sidebarCollapse').on('click', function () {
                     $('#sidebar').toggleClass('active');
                 });
+                // $('#name').keyup(function(){
+                //     this.value = this.value.trim();
+                    
+                // });
             });
+            
          </script>
     </body>
 </html>

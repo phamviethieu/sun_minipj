@@ -30,7 +30,6 @@
             if(self::get("login")==false){
                 header("Location:login.php");
             }
-           
             return true;
            
             

@@ -15,7 +15,7 @@
         <div class="col-md-2">
             <button type="button" id="sidebarCollapse" class="btn btn-danger navbar-btn">
                 <a href="http://localhost/miniProject/?action=logout"> 
-                    <?php echo Session::get("adminAccount") ; ?> 
+                    <?php //if(isset($acc)){echo $acc ;} ?> 
                     <span><i class="fas fa-sign-out-alt"></i></span> 
                 </a>
             </button>

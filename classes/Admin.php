@@ -1,5 +1,6 @@
 <?php
     $filepath = realpath(dirname(__FILE__));
+
     include_once ($filepath.'/../lib/Session.php');
     include_once ($filepath.'/../core/Database.php');
     include_once ($filepath.'/../lib/Cookie.php');
@@ -45,6 +46,10 @@ class Admin{
             }
         }
     }
+    public function remember_cookie($acc, $pass){
+        
+    }
+
     public function show(){
         $query = "SELECT * FROM comics ORDER BY id DESC";
         $result = $this->db->select($query);
@@ -91,8 +96,8 @@ class Admin{
         
         foreach($result as $rs){
             $name =  $rs->name;
-             $author = $rs->author;
-             $describe = $rs->description;
+            $author = $rs->author;
+            $describe = $rs->description;
         }
         echo '
             <form method="post" name="update">
@@ -115,15 +120,18 @@ class Admin{
     }
     public function update_comic($_data, $id){
         if(!empty($_data['name']&&!empty($_data['author'])&&!empty($_data['describe']))){
-            $name = $_data['name'];
-            $description = $_data['describe'];
-            $author = $_data['author'];
+            $vld = new Validate();
+            $name = $vld->test_input($_data['name']);
+            $description = $vld->test_input($_data['describe']);
+            $author = $vld->test_input($_data['author']);
             $query = "UPDATE `comics` SET `name`='".$name."',`description`='".$description."',`author`='".$author."' WHERE id = ".$id;
             $result = $this->db->update($query);
             if($result){
                 Cookie::set('update_status',1,10);
             } else Cookie::set('update_status',0,10);
-            header("Location:update.php?id=".$id);
+            Session::init();
+            Session::set("add_status", true);
+            header("Location:../index.php");
             $this->db->disconnect();
         } else {                
             echo '<div class="alert alert-danger" role="alert">

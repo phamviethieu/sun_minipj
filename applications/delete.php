@@ -5,10 +5,13 @@
     include_once ($filepath.'/../lib/Cookie.php');
     include_once ($filepath.'/../core/Database.php');
     include_once ($filepath.'/../classes/Admin.php');
-
-    if(isset($_GET['id'])){
-        $ad = new Admin();
-        $id = $_GET['id'];
-        $ad->delete($id);
+    
+    Session::init();
+    if(Session::checkAdminLogin()){
+        if(isset($_GET['id'])){
+            $ad = new Admin();
+            $id = $_GET['id'];
+            $ad->delete($id);
+        }
     }
 ?>

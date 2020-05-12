@@ -10,6 +10,7 @@
             }
             return false;
         } 
+        
         public static function get($name){
             if (isset ($_COOKIE[$name])){
                 return $_COOKIE[$name];
